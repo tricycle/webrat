@@ -285,7 +285,7 @@ For example:
     end
 
     def response_location
-      response.headers["Location"]
+      response.headers.to_hash["Location"]
     end
 
     def current_host
