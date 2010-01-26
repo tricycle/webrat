@@ -195,9 +195,9 @@ EOS
 
 
     def save_and_open_screengrab
-      return unless File.exist?(saved_page_dir)
+      return unless File.exist?(Webrat.configuration.saved_pages_dir)
 
-      filename = "#{saved_page_dir}/webrat-#{Time.now.to_i}.png"
+      filename = "#{Webrat.configuration.saved_pages_dir}/webrat-#{Time.now.to_i}.png"
 
       if $browser.chrome_backend?
         $browser.capture_entire_page_screenshot(filename, '')
@@ -232,7 +232,7 @@ EOS
 
     def create_browser
       $browser = ::Selenium::Client::Driver.new(Webrat.configuration.selenium_server_address || "localhost",
-      Webrat.configuration.selenium_server_port, Webrat.configuration.selenium_browser_key, "http://#{Webrat.configuration.application_address}:#{Webrat.configuration.application_port}")
+      Webrat.configuration.selenium_server_port, Webrat.configuration.selenium_browser_key, "http://#{Webrat.configuration.application_address}:#{Webrat.configuration.application_port_for_selenium}")
       $browser.set_speed(0) unless Webrat.configuration.selenium_server_address
 
       at_exit do

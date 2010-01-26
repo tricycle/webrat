@@ -1,4 +1,5 @@
 require "webrat/core_extensions/deprecate"
+require "pathname"
 
 module Webrat
 
@@ -26,7 +27,10 @@ module Webrat
     # Save and open pages with error status codes (500-599) in a browser? Defualts to true.
     attr_writer :open_error_files
 
-    # Which rails environment should the selenium tests be run in? Defaults to selenium.
+    # Save and open page storage directory, defaults to "tmp" under current directory if exists, otherwise current directory
+    attr_accessor :saved_pages_dir
+
+    # Which rails environment should the selenium tests be run in? Defaults to test.
     attr_accessor :application_environment
     webrat_deprecate :selenium_environment, :application_environment
     webrat_deprecate :selenium_environment=, :application_environment=
@@ -35,6 +39,13 @@ module Webrat
     attr_accessor :application_port
     webrat_deprecate :selenium_port, :application_port
     webrat_deprecate :selenium_port=, :application_port=
+
+    # Which port should selenium use to access the application. Defaults to application_port
+    attr_writer :application_port_for_selenium
+    
+    def application_port_for_selenium
+      @application_port_for_selenium || self.application_port
+    end
 
     # Which underlying app framework we're testing with selenium
     attr_accessor :application_framework
@@ -68,8 +79,11 @@ module Webrat
       self.infinite_redirect_limit = 10
       self.selenium_browser_key = '*firefox'
       self.selenium_browser_startup_timeout = 5
-    end
 
+      tmp_dir = Pathname.new(Dir.pwd).join("tmp")
+      self.saved_pages_dir = tmp_dir.exist? ? tmp_dir : Dir.pwd
+    end
+    
     def open_error_files? #:nodoc:
       @open_error_files ? true : false
     end
